@@ -1,14 +1,21 @@
 pipeline {
-  agent any             // o: agent { label 'mac' }
-
-  environment { BASE_URL = credentials('BASE_URL') }
-  options { timeout(time: 60, unit: 'MINUTES'); timestamps() }
-
+  agent any
+  environment {
+    BASE_URL = credentials('BASE_URL')
+  }
+  options {
+    timeout(time: 60, unit: 'MINUTES')
+    timestamps()
+  }
   stages {
-    stage('Checkout') { steps { checkout scm } }
-    stage('Install deps')    { steps { sh 'npm ci' } }
-    stage('Install browsers'){ steps { sh 'npx playwright install' } }
-    stage('Run tests')       { steps { sh 'npx playwright test --reporter=line,junit' } }
+    stage('Checkout')          { steps { checkout scm } }
+    stage('Install deps')      { steps { sh 'npm ci' } }
+    stage('Install browsers')  { steps { sh 'npx playwright install' } }
+    stage('Run tests') {
+      steps {
+        sh 'npx playwright test --reporter=html,line,junit'
+      }
+    }
   }
   post {
     always {
