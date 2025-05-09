@@ -1,6 +1,8 @@
 pipeline {
-  agent { label 'mac' }
-  tools { nodejs 'node-lts' }
+  docker {
+    image 'mcr.microsoft.com/playwright:v1.44.1-focal'
+    args '-u root:root --ipc=host'
+  }
   environment { BASE_URL = credentials('BASE_URL') }
   options { timeout(time: 60, unit: 'MINUTES'); timestamps() }
   stages {
